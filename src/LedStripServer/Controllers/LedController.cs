@@ -10,7 +10,7 @@ namespace LedStripServer.Controllers
         public LedController(SoftwarePwmController pwmController) =>
             _pwmController = pwmController;
 
-        [HttpPost("/set/{red}/{green}/{blue}", Name = Routes.SetLedColor)]
+        [Route("/set/{red}/{green}/{blue}", Name = Routes.SetLedColor)]
         public IActionResult SetLedColor(int red, int green, int blue, double hz = 15.0)
         {
             _pwmController.SetPinPwm(17, hz, red / 255.0);

@@ -1,6 +1,7 @@
 ﻿using LedStripServer.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Device.Gpio;
@@ -23,6 +24,9 @@ namespace LedStripServer
             }
 
             app.UseMvc(route => route.MapRoute("default", String.Empty));
+            app.Run(async (context) => {
+                await context.Response.WriteAsync("Hello World!");
+            });
         }
     }
 }
