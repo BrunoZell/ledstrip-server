@@ -20,7 +20,7 @@ namespace LedStripServer.Services
         public void SetPinPwm(int pinNumber, double frequencyInHertz, double dutyCyclePercentage)
         {
             if (_disposed)
-                throw new ObjectDisposedException(this.ToString());
+                throw new ObjectDisposedException(ToString());
 
             StopPinPwm(pinNumber);
             PreparePin(pinNumber);
@@ -34,7 +34,7 @@ namespace LedStripServer.Services
         public void StopPinPwm(int pinNumber)
         {
             if (_disposed)
-                throw new ObjectDisposedException(this.ToString());
+                throw new ObjectDisposedException(ToString());
 
             if (_running.Remove(pinNumber, out var task)) {
                 task.Cancel();
@@ -68,6 +68,8 @@ namespace LedStripServer.Services
                 }
             } catch (TaskCanceledException) {
                 // Gracefully stop when canceled
+            } finally {
+                _gpioController.ClosePin(pinNumber);
             }
         }
 
