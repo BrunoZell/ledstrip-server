@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Device.Pwm;
 
 namespace LedStripServer
 {
@@ -9,6 +10,8 @@ namespace LedStripServer
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
+            services.AddSingleton<PwmController>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -17,9 +20,7 @@ namespace LedStripServer
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) => {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.UseMvc(route => route.MapRoute("default", String.Empty));
         }
     }
 }
