@@ -8,6 +8,7 @@ namespace LedStripServer.Services
 {
     public class SoftwarePwmController : IDisposable
     {
+        private bool _disposed;
         private readonly GpioController _gpioController;
         private readonly Dictionary<int, PwmTask> _running = new Dictionary<int, PwmTask>();
 
@@ -18,6 +19,9 @@ namespace LedStripServer.Services
 
         public void SetPinPwm(int pinNumber, double frequencyInHertz, double dutyCyclePercentage)
         {
+            if (_disposed)
+                throw new ObjectDisposedException(this.ToString());
+
             StopPinPwm(pinNumber);
             PreparePin(pinNumber);
 
@@ -29,6 +33,9 @@ namespace LedStripServer.Services
 
         public void StopPinPwm(int pinNumber)
         {
+            if (_disposed)
+                throw new ObjectDisposedException(this.ToString());
+
             if (_running.Remove(pinNumber, out var task)) {
                 task.Cancel();
             }
@@ -82,6 +89,18 @@ namespace LedStripServer.Services
             {
                 _cancellationTokenSource.Cancel();
                 _task.GetAwaiter().GetResult();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            _disposed = true;
+
+            foreach (int pinNumber in _running.Keys) {
+                StopPinPwm(pinNumber);
             }
         }
     }
