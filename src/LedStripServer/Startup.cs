@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using LedStripServer.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Device.Pwm;
+using System.Device.Gpio;
 
 namespace LedStripServer
 {
@@ -11,7 +12,8 @@ namespace LedStripServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSingleton<PwmController>();
+            services.AddSingleton<GpioController>();
+            services.AddSingleton<SoftwarePwmController>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
