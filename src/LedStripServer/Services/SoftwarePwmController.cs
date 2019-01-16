@@ -22,13 +22,14 @@ namespace LedStripServer.Services
             if (_disposed)
                 throw new ObjectDisposedException(ToString());
 
-            StopPinPwm(pinNumber);
-            PreparePin(pinNumber);
+            lock (this) {
+                UnlockedStop(pinNumber);
+                PreparePin(pinNumber);
 
-            var cts = new CancellationTokenSource();
-            var task = RunPwm(pinNumber, frequencyInHertz, dutyCyclePercentage, cts.Token);
-            var pwm = new PwmTask(pinNumber, task, cts);
-            _running.Add(pinNumber, pwm);
+                var cts = new CancellationTokenSource();
+                var task = RunPwm(pinNumber, frequencyInHertz, dutyCyclePercentage, cts.Token);
+                _running[pinNumber] = new PwmTask(pinNumber, task, cts);
+            }
         }
 
         public void StopPinPwm(int pinNumber)
@@ -36,6 +37,13 @@ namespace LedStripServer.Services
             if (_disposed)
                 throw new ObjectDisposedException(ToString());
 
+            lock (this) {
+                UnlockedStop(pinNumber);
+            }
+        }
+
+        private void UnlockedStop(int pinNumber)
+        {
             if (_running.Remove(pinNumber, out var task)) {
                 task.Cancel();
             }
