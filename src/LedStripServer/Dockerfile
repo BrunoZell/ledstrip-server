@@ -12,7 +12,7 @@ RUN dotnet publish -c release -o out
 
 
 # Build runtime image
-FROM microsoft/dotnet:2.1-runtime-stretch-slim-arm32v7 AS runtime
+FROM microsoft/dotnet:2.1-aspnetcore-runtime-stretch-slim-arm32v7 AS runtime
 WORKDIR /app
 COPY --from=build /app/out ./
 VOLUME /sys # For GPIO access
