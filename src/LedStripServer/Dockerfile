@@ -15,5 +15,11 @@ RUN dotnet publish -c release -o out
 FROM microsoft/dotnet:2.1-aspnetcore-runtime-stretch-slim-arm32v7 AS runtime
 WORKDIR /app
 COPY --from=build /app/out ./
-VOLUME /sys # For GPIO access
+
+# Make system devices available for System.Device.Gpio
+#VOLUME /sys # For PWM access
+#VOLUME /dev # For GPIO access
+
+# Use --device /dev/gpiomem instead
+
 ENTRYPOINT ["dotnet", "LedStripServer.dll"]
